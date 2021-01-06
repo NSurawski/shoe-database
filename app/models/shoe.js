@@ -22,4 +22,4 @@ const shoeSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('Example', shoeSchema)
+module.exports = mongoose.model('Shoe', shoeSchema)

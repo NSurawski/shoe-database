@@ -9,9 +9,9 @@ curl "${API}${URL_PATH}" \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer ${TOKEN}" \
   --data '{
-    "example": {
-      "title": "'"${TITLE}"'",
-      "director": "'"${DIRECTOR}"'",
+    "shoe": {
+      "brand": "'"${BRAND}"'",
+      "type": "'"${TYPE}"'",
       "style": "'"${STYLE}"'"
     }
   }'

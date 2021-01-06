@@ -58,10 +58,14 @@ router.get('/examples/:id', requireToken, (req, res, next) => {
 // CREATE
 // POST /examples
 router.post('/examples', requireToken, (req, res, next) => {
+  // extract the shoe from the incoming requests data (req.body)
+  const exampleData = req.body.example
+  // add user as shoe owner
+  exampleData.owner = req.user._id
   // set owner of new example to be current user
   req.body.example.owner = req.user.id
 
-  Example.create(req.body.example)
+  Example.create(exampleData)
     // respond to succesful `create` with status 201 and JSON of new "example"
     .then(example => {
       res.status(201).json({ example: example.toObject() })
