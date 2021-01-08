@@ -102,7 +102,8 @@ router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
 // DESTROY
 // DELETE /examples/5a7db6c74d55bc51bdf39793
 router.delete('/examples/:id', requireToken, (req, res, next) => {
-  Example.findById(req.params.id)
+  const id = req.params.id
+  Shoe.findByOne({ _id: id, owner: req.user._})
     .then(handle404)
     .then(example => {
       // throw an error if current user doesn't own `example`
