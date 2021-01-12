@@ -5,11 +5,11 @@ const shoeSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  style: {
+  type: {
     type: String,
     required: true
   },
-  type: {
+  style: {
     type: String,
     required: true
   },

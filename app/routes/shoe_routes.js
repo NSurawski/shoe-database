@@ -17,7 +17,7 @@ router.post('/shoes', requireToken, (req, res, next) => {
   shoeData.owner = req.user._id
   // set owner of new example to be current user
   req.body.shoe.owner = req.user.id
-// create a shoe using the shoeData
+  // create a shoe using the shoeData
   Shoe.create(shoeData)
     // respond to succesful `create` with status 201 and JSON of new "example"
     .then(shoe => {
@@ -33,13 +33,14 @@ router.post('/shoes', requireToken, (req, res, next) => {
 // GET /examples
 router.get('/shoes', requireToken, (req, res, next) => {
   // find a shoe using user id
-  Shoe.find({ owner: req.user._id })
-    // .then(shoes => {
-  // `examples` will be an array of Mongoose documents
-  // we want to convert each one to a POJO, so we use `.map` to
-  // apply `.toObject` to each one
-  // return shoes.map(shoe => shoe.toObject())
-    // })
+  const ownerId = req.user._id
+  Shoe.find({ owner: ownerId })
+    .then(shoes => {
+      // `examples` will be an array of Mongoose documents
+      // we want to convert each one to a POJO, so we use `.map` to
+      // apply `.toObject` to each one
+      return shoes.map(shoe => shoe.toObject())
+    })
     // respond with status 200 and JSON of the examples
     .then(shoes => res.status(200).json({ shoes: shoes }))
     // if an error occurs, pass it to the handler
@@ -64,7 +65,7 @@ router.patch('/shoes/:id', requireToken, removeBlanks, (req, res, next) => {
       requireOwnership(req, shoe)
 
       // pass the result of Mongoose's `.update` to the next `.then`
-      return shoe.updateOne(req.body.shoes)
+      return shoe.updateOne(req.body.shoe)
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
