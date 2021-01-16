@@ -30,7 +30,7 @@ router.post('/shoes', requireToken, (req, res, next) => {
 })
 
 // INDEX
-// GET /examples
+// GET /shoes
 router.get('/shoes', requireToken, (req, res, next) => {
   // find a shoe using user id
   const ownerId = req.user._id
@@ -48,7 +48,7 @@ router.get('/shoes', requireToken, (req, res, next) => {
 })
 
 // UPDATE
-// PATCH /examples/5a7db6c74d55bc51bdf39793
+// PATCH /shoes/:id
 router.patch('/shoes/:id', requireToken, removeBlanks, (req, res, next) => {
   const id = req.params.id
   // if the client attempts to change the `owner` property by including a new
@@ -80,7 +80,7 @@ router.delete('/shoes/:id', requireToken, (req, res, next) => {
   Shoe.findOne({ _id: id, owner: req.user._id })
     .then(handle404)
     .then(shoe => {
-      // throw an error if current user doesn't own `example`
+      // throw an error if current user doesn't own `shoe`
       requireOwnership(req, shoe)
       // delete the example ONLY IF the above didn't throw
       shoe.deleteOne()
