@@ -6,7 +6,9 @@ const errors = require('../../lib/custom_errors')
 const handle404 = errors.handle404
 
 // require shoe model
-const Shoe = require('../models/shoe')
+// const Shoe = require('../models/shoe')
+
+const Comment = require('../models/comment')
 
 const requireToken = passport.authenticate('bearer', { session: false })
 
@@ -18,7 +20,7 @@ router.post('/comments', requireToken, (req, res, next) => {
   const commentData = req.body.comment
   commentData.author = req.user._id
   const shoeId = commentData.shoeId
-  Shoe.findById(shoeId)
+  Comment.findById(shoeId)
     .populate('owner', '_id email')
     .populate('comments', 'owner content')
     .then(handle404)
@@ -39,11 +41,9 @@ router.post('/comments', requireToken, (req, res, next) => {
 // DELETE /comments/:commentId
 router.delete('/comments/:commentId', requireToken, (req, res, next) => {
   const commentId = req.params.commentId
-
-  // extract post id
   const shoeId = req.body.comment.shoeId
 
-  Shoe.findById(shoeId)
+  Comment.findById(shoeId)
     .then(handle404)
     .then(shoe => {
       // requireOwnership(req, shoe)
