@@ -2,11 +2,11 @@ const express = require('express')
 const passport = require('passport')
 
 // require errors & handle404
-const errors = require('../../lib/custom_errors')
-const handle404 = errors.handle404
+const customErrors = require('../../lib/custom_errors')
+const handle404 = customErrors.handle404
 
 // require shoe model
-// const Shoe = require('../models/shoe')
+const Shoe = require('../models/shoe')
 
 const Comment = require('../models/comment')
 
@@ -18,22 +18,15 @@ const router = express.Router()
 // POST /comments
 router.post('/comments', requireToken, (req, res, next) => {
   const commentData = req.body.comment
-  commentData.author = req.user._id
+  commentData.owner = req.user
   const shoeId = commentData.shoeId
-  Comment.findById(shoeId)
-    .populate('owner', '_id email')
-    .populate('comments', 'owner content')
+  Shoe.findById(shoeId)
     .then(handle404)
     .then(shoe => {
       shoe.comments.push(commentData)
       return shoe.save()
     })
-    .then(shoe => {
-      const lastCommentPosition = (shoe.comments.length - 1)
-      const newComment = shoe.comments[lastCommentPosition]
-      return newComment
-    })
-    .then((newComment) => res.status(201).json({ newComment }))
+    .then((shoe) => res.status(201).json({ shoe: shoe }))
     .catch(next)
 })
 
