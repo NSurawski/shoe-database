@@ -5,10 +5,9 @@ const passport = require('passport')
 const customErrors = require('../../lib/custom_errors')
 const handle404 = customErrors.handle404
 
-// require shoe model
 const Shoe = require('../models/shoe')
-
-const Comment = require('../models/comment')
+// const Comment = require('../models/comment')
+// const requireOwnership = customErrors.requireOwnership
 
 const requireToken = passport.authenticate('bearer', { session: false })
 
@@ -19,7 +18,7 @@ const router = express.Router()
 router.post('/comments', requireToken, (req, res, next) => {
   const commentData = req.body.comment
   commentData.owner = req.user
-  const shoeId = commentData.shoeId
+  const shoeId = req.body.shoe.id
   Shoe.findById(shoeId)
     .then(handle404)
     .then(shoe => {
@@ -34,16 +33,13 @@ router.post('/comments', requireToken, (req, res, next) => {
 // DELETE /comments/:commentId
 router.delete('/comments/:commentId', requireToken, (req, res, next) => {
   const commentId = req.params.commentId
-  const shoeId = req.body.comment.shoeId
-
-  Comment.findById(shoeId)
+  const shoeId = req.body.shoe.id
+  Shoe.findById(shoeId)
     .then(handle404)
     .then(shoe => {
-      // requireOwnership(req, shoe)
       const comment = shoe.comments.id(commentId)
-
+      // requireOwnership(req, comment)
       comment.remove()
-
       return shoe.save()
     })
     .then(shoe => res.status(201).json({ shoe: shoe }))
