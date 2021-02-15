@@ -7,7 +7,8 @@ const handle404 = customErrors.handle404
 
 const Shoe = require('../models/shoe')
 // const Comment = require('../models/comment')
-// const requireOwnership = customErrors.requireOwnership
+
+const requireOwnership = customErrors.requireOwnership
 
 const requireToken = passport.authenticate('bearer', { session: false })
 
@@ -32,17 +33,28 @@ router.post('/comments', requireToken, (req, res, next) => {
 // DELETE comment
 // DELETE /comments/:commentId
 router.delete('/comments/:commentId', requireToken, (req, res, next) => {
+  // const commentData = req.body.comment
+  // Shoe.findById({
+  //   commentId: req.params.commentId, owner: req.user.commentId
+  // })
+  //   .then(handle404)
+  //   .then((shoe) => requireOwnership(req, shoe))
+  //   .then(shoe => {
+  //     shoe.comments.deleteOne(commentData)
+  //   })
+  //   .then(() => res.sentStatus(201))
+  //   .catch(next)
   const commentId = req.params.commentId
   const shoeId = req.body.shoe.id
   Shoe.findById(shoeId)
     .then(handle404)
     .then(shoe => {
       const comment = shoe.comments.id(commentId)
-      // requireOwnership(req, comment)
+      requireOwnership(req, comment)
       comment.remove()
       return shoe.save()
     })
-    .then(shoe => res.status(201).json({ shoe: shoe }))
+    .then((shoe) => res.status(201).json({ shoe: shoe }))
     .catch(next)
 })
 
